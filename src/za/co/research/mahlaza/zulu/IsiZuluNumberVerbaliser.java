@@ -64,13 +64,22 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
 
     public String getBasicPrefix(NounClass nounClass) {
         String basicPrefix = "";
-        //TODO: implement this
+
+        ConcordType sbjConc = ConcordType.getConcordType("SubjectivalConcord");
+        String subjCon = concordMapper.getConcordValue(nounClass, sbjConc);
+        basicPrefix = subjCon.substring(1);
+
         return basicPrefix;
     }
 
     public String removeNasals(String morpheme) {
         String unnasalisedMorpheme = "";
-        //TODO: implement this
+        if (morpheme.endsWith("n")) {
+            unnasalisedMorpheme = morpheme.substring(0, morpheme.length()-1);
+        }
+        else if (morpheme.endsWith("m")) {
+            unnasalisedMorpheme = morpheme.substring(0, morpheme.length()-1);
+        }
         return unnasalisedMorpheme;
     }
 
