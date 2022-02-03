@@ -124,7 +124,8 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
             else if (category == NumCategory.Collective) {
                 String basicPref = getBasicPrefix(nounClass);
                 String unnasalisedBasicPref = removeNasals(basicPref);
-                String prefix = combine(combine(unnasalisedBasicPref, "o"), basicPref);
+                String unfinalisedPrefix = combine(unnasalisedBasicPref, "o");
+                String prefix = combine(unfinalisedPrefix, basicPref);
                 numAstext = combine(prefix, stem);
             }
             else {
@@ -140,7 +141,48 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
                     int num10sVal = (number - remainder) / nearest10s;
                     boolean usePlural = num10sVal > 1;
 
-                    //TODO: finish the rest
+                    String lead = "";
+                    if (category == NumCategory.Cardinal) {
+                        ConcordType concType = ConcordType.getConcordType("SubjectivalConcord");
+                        lead = concordMapper.getConcordValue(nounClass, concType);
+                    }
+                    else if (category == NumCategory.Ordinal) {
+                        ConcordType concType = ConcordType.getConcordType("PossessiveConcord");
+                        lead = concordMapper.getConcordValue(nounClass, concType);
+                    }
+                    else if (category == NumCategory.Collective) {
+                        ConcordType concType = ConcordType.getConcordType("AdjectivalConcord");
+                        lead = concordMapper.getConcordValue(nounClass, concType);
+                    }
+                    else {
+                        throw new IllegalArgumentException("The getText(number, nounClass, category) method does not support the category = "+category);
+                    }
+
+                    String word1Prefix = getNearest10sPrefix(nearest10s, category, usePlural);
+                    String word1Stem = getStem(nearest10s);
+                    String word1 = combine(combine(lead, word1Prefix), word1Stem);
+                    numAstext = word1;
+
+                    if (usePlural) {
+                        String word2Prefix = getNumOf10sPrefix(num10sVal);
+                        String word2Stem = getStem(num10sVal);
+                        String word2 = combine(word2Prefix, word2Stem);
+                        numAstext = numAstext + " " + word2;
+                    }
+
+                    if (remainder > 0) {
+                        String word3Remainder = "";
+                        if (remainder < 6) {
+                            word3Remainder = getStem(remainder);
+                        }
+                        else if (remainder > 5 && remainder < 10) {
+                            word3Remainder = getNumberAsNoun(remainder);
+                        }
+                        else {
+                            word3Remainder = getText(remainder, nounClass, category);
+                        }
+                        numAstext = numAstext + " " + combine("na", word3Remainder);
+                    }
                     break;
                 }
             }
@@ -173,13 +215,17 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
 
         ConcordType sbjConc = ConcordType.getConcordType("SubjectivalConcord");
         String subjCon = concordMapper.getConcordValue(nounClass, sbjConc);
-        basicPrefix = subjCon.substring(1);
-
+        if (subjCon.length() > 1) {
+            basicPrefix = subjCon.substring(1);
+        } else {
+            //TODO: this is not correct. Classes with subjc with one letter have other concords, use them and remove the leading letter.
+            basicPrefix = subjCon;
+        }
         return basicPrefix;
     }
 
     public String removeNasals(String morpheme) {
-        String unnasalisedMorpheme = "";
+        String unnasalisedMorpheme = morpheme;
         if (morpheme.endsWith("n")) {
             unnasalisedMorpheme = morpheme.substring(0, morpheme.length()-1);
         }

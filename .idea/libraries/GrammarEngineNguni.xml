@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="GrammarEngineNguni">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libs/GrammarEngineNguni.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
