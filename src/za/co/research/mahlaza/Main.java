@@ -6,7 +6,7 @@ import za.co.research.mahlaza.zulu.NumCategory;
 
 public class Main {
     public static void main(String[] args) {
-        NounClass class4 = NounClass.getNounClass("6");
+        NounClass class4 = NounClass.getNounClass("3");
         IsiZuluNumberVerbaliser verbaliser = new IsiZuluNumberVerbaliser();
 
         for (int i = 1; i < 30; i++) {
