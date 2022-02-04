@@ -27,7 +27,7 @@ public class CollectiveSpecialMultipleOfTenController implements SpecialMultiple
             prefix = isPlural? "zi" : "yi";
         }
         else if (number == 10 || number == 100) {
-            prefix = isPlural? "nga" : "li";
+            prefix = isPlural? "ngama" : "li";
         }
         else {
             throw new IllegalArgumentException("The getPrefix method does not support the value "+number);

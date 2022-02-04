@@ -6,17 +6,17 @@ import za.co.research.mahlaza.zulu.NumCategory;
 
 public class Main {
     public static void main(String[] args) {
-        NounClass class4 = NounClass.getNounClass("2");
-
+        NounClass class4 = NounClass.getNounClass("6");
         IsiZuluNumberVerbaliser verbaliser = new IsiZuluNumberVerbaliser();
-        try {
-            for (int i = 1; i < 20; i++) {
-                //System.out.println(i + " - " + verbaliser.getText(i, NumCategory.Ordinal));
+
+        for (int i = 1; i < 30; i++) {
+            try {
+                //System.out.println(i + " - " + verbaliser.getText(i, NumCategory.Adverb));
                 System.out.println("NC = " + class4 + ", " + i + " - " + verbaliser.getText(i, class4, NumCategory.Cardinal));
             }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
+            catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }

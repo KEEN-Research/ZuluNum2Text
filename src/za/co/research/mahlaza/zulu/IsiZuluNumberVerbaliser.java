@@ -44,10 +44,10 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
     public String getText(int number, NumCategory category) throws Exception {
         String numAstext = "";
 
-        if (category == NumCategory.Cardinal || category == NumCategory.Ordinal) {
+        if ((category == NumCategory.Cardinal || category == NumCategory.Ordinal) & number < 10) {
             numAstext = "isi" + getStem(number);
         }
-        else if (category == NumCategory.Adverb) {
+        else if (category == NumCategory.Adverb && ifHasUniqueStem(number)) {
             if (number > 0 && number < 6) {
                 numAstext = "ka" + getStem(number);
             }
@@ -60,46 +60,49 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
             else if (number == 1000) {
                 numAstext = "kayi" + getStem(number);
             }
-            else {
-                int[] unqstems = {10, 100, 1000};
-                for (int i=0; i < unqstems.length; i++) {
-                        if (unqstems[i] > number) {
-                            int nearest10s = unqstems[i-1];
-                            int remainder = number % nearest10s;
-                            int num10sVal = (number - remainder) / nearest10s;
-                            boolean usePlural = num10sVal > 1;
+        }
+        if (number > 9 && numAstext.isEmpty()) {
+            int[] unqstems = {10, 100, 1000};
+            for (int i=0; i < unqstems.length; i++) {
+                if (unqstems[i] > number) {
+                    int nearest10s = unqstems[i-1];
+                    int remainder = number % nearest10s;
+                    int num10sVal = (number - remainder) / nearest10s;
+                    boolean usePlural = num10sVal > 1;
 
-                            String word1Prefix = getNearest10sPrefix(nearest10s, NumCategory.Adverb, usePlural);
-                            String word1 = getNearest10sWord(nearest10s, NumCategory.Adverb, usePlural);
-                            numAstext = combine(word1Prefix , word1);
+                    String word1Prefix = getNearest10sPrefix(nearest10s, NumCategory.Adverb, usePlural);
+                    String word1 = getNearest10sWord(nearest10s, NumCategory.Adverb, usePlural);
+
+                    if (category == NumCategory.Adverb) {
+                        numAstext = combine(word1Prefix , word1);
+                    }
+                    else {
+                        numAstext = word1;
+                    }
 
 
-                            if (usePlural) {
-                                String word2Prefix = getNumOf10sPrefix(num10sVal);
-                                String word2Stem = getStem(num10sVal);
-                                numAstext = numAstext + " "+combine(word2Prefix, word2Stem);
-                            }
+                    if (usePlural) {
+                        String word2Prefix = getNumOf10sPrefix(num10sVal);
+                        String word2Stem = getStem(num10sVal);
+                        numAstext = numAstext + " "+combine(word2Prefix, word2Stem);
+                    }
 
-                            if (remainder > 0) {
-                                String word3Remainder = "";
-                                if (remainder < 6) {
-                                    word3Remainder = getStem(remainder);
-                                }
-                                else if (remainder > 5 && remainder < 10) {
-                                    word3Remainder = getNumberAsNoun(remainder);
-                                }
-                                else {
-                                    word3Remainder = getText(remainder, NumCategory.Adverb);
-                                }
-                                numAstext = numAstext + " " + combine("na", word3Remainder);
-                            }
-                            break;
+                    if (remainder > 0) {
+                        String word3Remainder = "";
+                        if (remainder < 6) {
+                            word3Remainder = getStem(remainder);
                         }
+                        else if (remainder > 5 && remainder < 10) {
+                            word3Remainder = getNumberAsNoun(remainder);
+                        }
+                        else {
+                            word3Remainder = getText(remainder, NumCategory.Adverb);
+                        }
+                        numAstext = numAstext + " " + combine("na", word3Remainder);
+                    }
+                    break;
                 }
             }
-        }
-        else {
-            throw new InvalidParameterException("getText(num, category) does not support the category = "+category);
         }
 
         return numAstext;
@@ -119,9 +122,19 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
             else if (category == NumCategory.Ordinal) {
                 ConcordType concType = ConcordType.getConcordType("PossessiveConcord");
                 String concVal = concordMapper.getConcordValue(nounClass, concType);
-                numAstext = combine(concVal, stem);
+                String numAsNoun = getNumberAsNoun(number);
+                if (number == 1) {
+                    numAstext = combine(concVal, "ukuqala");
+                }
+                else {
+                    numAstext = combine(concVal, numAsNoun);
+                }
+
             }
             else if (category == NumCategory.Collective) {
+                if (number == 1) {
+                    throw new IllegalArgumentException("The "+category+" type does not support the the number = "+number);
+                }
                 String basicPref = getBasicPrefix(nounClass);
                 String unnasalisedBasicPref = removeNasals(basicPref);
                 String unfinalisedPrefix = combine(unnasalisedBasicPref, "o");
@@ -143,7 +156,8 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
 
                     String lead = "";
                     if (category == NumCategory.Cardinal) {
-                        ConcordType concType = ConcordType.getConcordType("SubjectivalConcord");
+                        ConcordType concType = ConcordType.getConcordType("AdjectivalConcord");
+                        String concVal = concordMapper.getConcordValue(nounClass, concType);
                         lead = concordMapper.getConcordValue(nounClass, concType);
                     }
                     else if (category == NumCategory.Ordinal) {
@@ -215,7 +229,7 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
 
         ConcordType sbjConc = ConcordType.getConcordType("SubjectivalConcord");
         String subjCon = concordMapper.getConcordValue(nounClass, sbjConc);
-        if (subjCon.length() > 1) {
+        if (subjCon.length() > 1 && subjCon.matches("[aeiou].*")) {
             basicPrefix = subjCon.substring(1);
         } else {
             //TODO: this is not correct. Classes with subjc with one letter have other concords, use them and remove the leading letter.
@@ -240,11 +254,11 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
 
         String stem = getStem(nearest10s);
         if (nearest10s == 1000) {
-            String prefix = usePlural ? "izi" : "";
+            String prefix = usePlural ? "izi" : "i";
             word = prefix + stem;
         }
         else if (nearest10s == 10 || nearest10s == 100) {
-            String prefix = usePlural ? "ama" : "";
+            String prefix = usePlural ? "ama" : "i";
             word = prefix + stem;
         }
         else {
@@ -294,7 +308,15 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
 
     public String getNumberAsNoun(int number) throws Exception {
         String stem = getStem(number);
-        String prefix = "isi";
+
+        String prefix = "";
+        if (number == 10) {
+            prefix = "i";
+        }
+        else {
+            prefix = "isi";
+        }
+
         return prefix + stem;
     }
 }
