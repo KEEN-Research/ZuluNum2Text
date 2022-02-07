@@ -4,6 +4,7 @@ import za.co.mahlaza.research.grammarengine.base.models.feature.ConcordType;
 import za.co.mahlaza.research.grammarengine.base.models.feature.NounClass;
 import za.co.mahlaza.research.grammarengine.nguni.zu.ZuluConcordMapper;
 import za.co.mahlaza.research.grammarengine.nguni.zu.ZuluMorphophonoAlternator;
+import za.co.mahlaza.research.grammarengine.nguni.zu.ZuluNounClassPrefixResolver;
 import za.co.research.mahlaza.NumberVerbaliser;
 import za.co.research.mahlaza.zulu.model.AdverbSpecialMultipleOfTenController;
 import za.co.research.mahlaza.zulu.model.CardinalSpecialMultipleOfTenControler;
@@ -22,6 +23,8 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
     private OrdinalSpecialMultipleOfTenControler ordinal10sController = new OrdinalSpecialMultipleOfTenControler();
     private CollectiveSpecialMultipleOfTenController collective10sController = new CollectiveSpecialMultipleOfTenController();
     private AdverbSpecialMultipleOfTenController adverb10sController = new AdverbSpecialMultipleOfTenController();
+    private ZuluNounClassPrefixResolver zuluNounClassPrefixController = new ZuluNounClassPrefixResolver();
+
 
     public IsiZuluNumberVerbaliser() {
         defaultStems = new HashMap<>();
@@ -112,37 +115,44 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
     public String getText(int number, NounClass nounClass, NumCategory category) throws Exception {
         String numAstext = "";
 
-        if (ifHasUniqueStem(number)) {
+        if (ifHasUniqueStem(number) && category == NumCategory.Cardinal && number < 10) {
             String stem = getStem(number);
-            if (category == NumCategory.Cardinal) {
-                ConcordType concType = ConcordType.getConcordType("AdjectivalConcord");
-                String concVal = concordMapper.getConcordValue(nounClass, concType);
-                numAstext = combine(concVal, stem);
-            }
-            else if (category == NumCategory.Ordinal) {
-                ConcordType concType = ConcordType.getConcordType("PossessiveConcord");
-                String concVal = concordMapper.getConcordValue(nounClass, concType);
-                String numAsNoun = getNumberAsNoun(number);
-                if (number == 1) {
-                    numAstext = combine(concVal, "ukuqala");
-                }
-                else {
-                    numAstext = combine(concVal, numAsNoun);
-                }
-
-            }
-            else if (category == NumCategory.Collective) {
-                if (number == 1) {
-                    throw new IllegalArgumentException("The "+category+" type does not support the the number = "+number);
-                }
-                String basicPref = getBasicPrefix(nounClass);
-                String unnasalisedBasicPref = removeNasals(basicPref);
-                String unfinalisedPrefix = combine(unnasalisedBasicPref, "o");
-                String prefix = combine(unfinalisedPrefix, basicPref);
-                numAstext = combine(prefix, stem);
+            ConcordType concType = ConcordType.getConcordType("AdjectivalConcord");
+            String concVal = concordMapper.getConcordValue(nounClass, concType);
+            numAstext = combine(concVal, stem);
+        }
+        else if (ifHasUniqueStem(number) && category == NumCategory.Ordinal) {
+            ConcordType concType = ConcordType.getConcordType("PossessiveConcord");
+            String concVal = concordMapper.getConcordValue(nounClass, concType);
+            String numAsNoun = getNumberAsNoun(number);
+            if (number == 1) {
+                numAstext = combine(concVal, "ukuqala");
             }
             else {
-                throw new IllegalArgumentException("The getText(number, nounClass, category) method does not support the category = "+category);
+                numAstext = combine(concVal, numAsNoun);
+            }
+        }
+        else  if (ifHasUniqueStem(number) && category == NumCategory.Collective  && number < 10) {
+            String stem = getStem(number);
+            if (number == 1) {
+                throw new IllegalArgumentException("The "+category+" type does not support the the number = "+number);
+            }
+
+            ConcordType concType = ConcordType.getConcordType("SubjectivalConcord");
+            String concVal = concordMapper.getConcordValue(nounClass, concType);
+
+            String basicPref = zuluNounClassPrefixController.getBasicPrefix(nounClass.getNounClass()); //getBasicPrefix(nounClass);
+            String unnasalisedBasicPref = removeNasals(basicPref);
+            String unfinalisedPrefix = combine(unnasalisedBasicPref, "o");
+            //TODO: if there are multiple basic prefixes, how do you chose between them?
+
+            String prefix = combine(unfinalisedPrefix, basicPref);
+            if (number > 5 && number < 10) {
+                String modifiedPrefix = combine(prefix, "si");
+                numAstext = combine(modifiedPrefix, stem);
+            }
+            else {
+                numAstext = combine(prefix, stem);
             }
         }
         else {
@@ -167,6 +177,10 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
                     else if (category == NumCategory.Collective) {
                         ConcordType concType = ConcordType.getConcordType("AdjectivalConcord");
                         lead = concordMapper.getConcordValue(nounClass, concType);
+                        if (lead.contains("/")) {
+                            String[] leadVals = lead.split("/");
+                            lead = leadVals[0];
+                        }
                     }
                     else {
                         throw new IllegalArgumentException("The getText(number, nounClass, category) method does not support the category = "+category);
