@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="ZuluNum2Text:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/ZuluNum2Text_jar</output-path>
+    <root id="archive" name="ZuluNum2Text.jar">
+      <element id="module-output" name="ZuluNum2Text" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/GrammarEngineNguni.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

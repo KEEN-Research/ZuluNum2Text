@@ -65,7 +65,7 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
             }
         }
         if (number > 9 && numAstext.isEmpty()) {
-            int[] unqstems = {10, 100, 1000};
+            int[] unqstems = {10, 100, 1000, 1000000};
             for (int i=0; i < unqstems.length; i++) {
                 if (unqstems[i] > number) {
                     int nearest10s = unqstems[i-1];
@@ -85,8 +85,15 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
 
 
                     if (usePlural) {
-                        String word2Prefix = getNumOf10sPrefix(num10sVal);
-                        String word2Stem = getStem(num10sVal);
+                        String word2Prefix = getNumOf10sPrefix(nearest10s, num10sVal);
+                        String word2Stem = "";
+                        if (num10sVal < 6) {
+                            word2Stem = getStem(num10sVal);
+                        }
+                        else if (num10sVal > 5 && num10sVal < 10) {
+                            word2Stem = getNumberAsNoun(num10sVal);
+                        }
+
                         numAstext = numAstext + " "+combine(word2Prefix, word2Stem);
                     }
 
@@ -119,6 +126,12 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
             String stem = getStem(number);
             ConcordType concType = ConcordType.getConcordType("AdjectivalConcord");
             String concVal = concordMapper.getConcordValue(nounClass, concType);
+
+            if (concVal.contains("/")) {
+                String[] vals = concVal.split("/");
+                concVal = vals[0]; //TODO when there are multiple values, how do you choose between them?
+            }
+
             numAstext = combine(concVal, stem);
         }
         else if (ifHasUniqueStem(number) && category == NumCategory.Ordinal) {
@@ -138,15 +151,20 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
                 throw new IllegalArgumentException("The "+category+" type does not support the the number = "+number);
             }
 
-            ConcordType concType = ConcordType.getConcordType("SubjectivalConcord");
-            String concVal = concordMapper.getConcordValue(nounClass, concType);
+            String basicPref = zuluNounClassPrefixController.getBasicPrefix(nounClass.getNounClass());
+            if (basicPref.contains("/")) {
+                //TODO: if there are multiple basic prefixes, how do you chose between them?
+                String[] prefVals = basicPref.split("/");
+                basicPref = prefVals[0];
+            }
 
-            String basicPref = zuluNounClassPrefixController.getBasicPrefix(nounClass.getNounClass()); //getBasicPrefix(nounClass);
+            ConcordType concType = ConcordType.getConcordType("PossessiveConcord");
+            String possConVal = concordMapper.getConcordValue(nounClass, concType);
+
             String unnasalisedBasicPref = removeNasals(basicPref);
-            String unfinalisedPrefix = combine(unnasalisedBasicPref, "o");
-            //TODO: if there are multiple basic prefixes, how do you chose between them?
+            String unfinalisedPrefix = combine(possConVal, "o");
+            String prefix = combine(unfinalisedPrefix, unnasalisedBasicPref);
 
-            String prefix = combine(unfinalisedPrefix, basicPref);
             if (number > 5 && number < 10) {
                 String modifiedPrefix = combine(prefix, "si");
                 numAstext = combine(modifiedPrefix, stem);
@@ -156,7 +174,7 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
             }
         }
         else {
-            int[] unqstems = {10, 100, 1000};
+            int[] unqstems = {10, 100, 1000, 1000000};
             for (int i=0; i < unqstems.length; i++) {
                 if (unqstems[i] > number) {
                     int nearest10s = unqstems[i-1];
@@ -167,8 +185,11 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
                     String lead = "";
                     if (category == NumCategory.Cardinal) {
                         ConcordType concType = ConcordType.getConcordType("AdjectivalConcord");
-                        String concVal = concordMapper.getConcordValue(nounClass, concType);
                         lead = concordMapper.getConcordValue(nounClass, concType);
+                        if (lead.contains("/")) {
+                            String[] vals = lead.split("/");
+                            lead = vals[0]; //TODO when there are multiple values, how do you choose between them?
+                        }
                     }
                     else if (category == NumCategory.Ordinal) {
                         ConcordType concType = ConcordType.getConcordType("PossessiveConcord");
@@ -181,6 +202,7 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
                             String[] leadVals = lead.split("/");
                             lead = leadVals[0];
                         }
+                        lead = removeNasals(lead);
                     }
                     else {
                         throw new IllegalArgumentException("The getText(number, nounClass, category) method does not support the category = "+category);
@@ -192,8 +214,15 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
                     numAstext = word1;
 
                     if (usePlural) {
-                        String word2Prefix = getNumOf10sPrefix(num10sVal);
-                        String word2Stem = getStem(num10sVal);
+                        String word2Prefix = getNumOf10sPrefix(nearest10s, num10sVal);
+                        String word2Stem = "";
+                        if (num10sVal < 6) {
+                            word2Stem = getStem(num10sVal);
+                        }
+                        else if (num10sVal > 5 && num10sVal < 10) {
+                            word2Stem = getNumberAsNoun(num10sVal);
+                        }
+
                         String word2 = combine(word2Prefix, word2Stem);
                         numAstext = numAstext + " " + word2;
                     }
@@ -219,7 +248,7 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
         return numAstext;
     }
 
-    private String combine(String lmorph, String rmorph) {
+    private String combine(String lmorph, String rmorph) throws Exception {
         String newValue = phonConditioner.joinMorpheme(lmorph, rmorph);
         return newValue;
     }
@@ -306,16 +335,32 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
         return prefix;
     }
 
-    public String getNumOf10sPrefix(int num10sVal) {
+    public String getNumOf10sPrefix(int nearest, int num10sVal) {
         String prefix = "";
-        if (num10sVal > 1 && num10sVal < 6) {
-            prefix = "ama";
+        if (nearest == 10 || nearest == 100) {
+            if (num10sVal > 1 && num10sVal < 6) {
+                prefix = "ama";
+            }
+            else if (num10sVal > 5 && num10sVal < 10) {
+                prefix = "ayi";
+            }
+            else {
+                throw new InvalidParameterException("getNumOf10sPrefix(number) does no support number = "+num10sVal);
+            }
         }
-        else if (num10sVal > 5 && num10sVal < 10) {
-            prefix = "ayi";
-        }
-        else {
-            throw new InvalidParameterException("getNumOf10sPrefix(number) does no support number = "+num10sVal);
+        else if (nearest == 1000) {
+            if (num10sVal == 3 || num10sVal == 5) {
+                return "ezin";
+            }
+            else if (num10sVal > 1 && num10sVal < 6) {
+                prefix = "ezim";
+            }
+            else if (num10sVal > 5 && num10sVal < 10) {
+                prefix = "eziyi";
+            }
+            else {
+                throw new InvalidParameterException("getNumOf10sPrefix(number) does no support number = "+num10sVal);
+            }
         }
         return prefix;
     }
