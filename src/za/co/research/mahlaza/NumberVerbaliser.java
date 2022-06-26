@@ -6,4 +6,6 @@ import za.co.research.mahlaza.zulu.NumCategory;
 public interface NumberVerbaliser {
     String getText(int number, NumCategory category) throws Exception;
     String getText(int number, NounClass nounClass, NumCategory category) throws Exception;
+    String getText(int number, NumCategory category, boolean usePhonologicalConditioning) throws Exception;
+    String getText(int number, NounClass nounClass, NumCategory category, boolean usePhonologicalConditioning) throws Exception;
 }
