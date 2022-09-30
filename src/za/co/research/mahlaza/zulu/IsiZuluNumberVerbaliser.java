@@ -11,7 +11,8 @@ import za.co.research.mahlaza.zulu.model.CardinalSpecialMultipleOfTenControler;
 import za.co.research.mahlaza.zulu.model.CollectiveSpecialMultipleOfTenController;
 import za.co.research.mahlaza.zulu.model.OrdinalSpecialMultipleOfTenControler;
 import java.security.InvalidParameterException;
-import java.util.HashMap;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
 
@@ -25,6 +26,7 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
     private AdverbSpecialMultipleOfTenController adverb10sController = new AdverbSpecialMultipleOfTenController();
     private ZuluNounClassPrefixResolver zuluNounClassPrefixController = new ZuluNounClassPrefixResolver();
 
+    private Queue<String> morphemeListForDebugging = new LinkedList<>();
 
     public IsiZuluNumberVerbaliser() {
         defaultStems = new HashMap<>();
@@ -43,6 +45,10 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
         defaultStems.put(1000, "nkulungwane");
     }
 
+    protected Queue<String> getDebugMorphemes() {
+        return morphemeListForDebugging;
+    }
+
     @Override
     public String getText(int number, NumCategory category) throws Exception {
         return getText(number, category, true);
@@ -54,24 +60,44 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
     }
 
     @Override
-    public String getText(int number, NumCategory category, boolean usePhonologicalConditioning) throws Exception {
+    public String getText(int number, NumCategory category, boolean debugMode) throws Exception {
         String numAstext = "";
 
         if ((category == NumCategory.Cardinal || category == NumCategory.Ordinal) & number < 10) {
             numAstext = "isi" + getStem(number);
+            if (debugMode) {
+                morphemeListForDebugging.add("isi");
+                morphemeListForDebugging.add(getStem(number));
+            }
         }
         else if (category == NumCategory.Adverb && ifHasUniqueStem(number)) {
             if (number > 0 && number < 6) {
                 numAstext = "ka" + getStem(number);
+                if (debugMode) {
+                    morphemeListForDebugging.add("ka");
+                    morphemeListForDebugging.add(getStem(number));
+                }
             }
             else if (number > 5 && number < 10) {
                 numAstext = "kasi" + getStem(number);
+                if (debugMode) {
+                    morphemeListForDebugging.add("kasi");
+                    morphemeListForDebugging.add(getStem(number));
+                }
             }
             else if (number == 10 || number == 100) {
                 numAstext = "kali" + getStem(number);
+                if (debugMode) {
+                    morphemeListForDebugging.add("kali");
+                    morphemeListForDebugging.add(getStem(number));
+                }
             }
             else if (number == 1000) {
                 numAstext = "kayi" + getStem(number);
+                if (debugMode) {
+                    morphemeListForDebugging.add("kayi");
+                    morphemeListForDebugging.add(getStem(number));
+                }
             }
         }
         if (number > 9 && numAstext.isEmpty()) {
@@ -87,10 +113,17 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
                     String word1 = getNearest10sWord(nearest10s, NumCategory.Adverb, usePlural);
 
                     if (category == NumCategory.Adverb) {
-                        numAstext = combine(word1Prefix , word1, usePhonologicalConditioning);
+                        numAstext = combine(word1Prefix , word1);
+                        if (debugMode) {
+                            morphemeListForDebugging.add(word1Prefix);
+                            morphemeListForDebugging.add(word1);
+                        }
                     }
                     else {
                         numAstext = word1;
+                        if (debugMode) {
+                            morphemeListForDebugging.add(word1);
+                        }
                     }
 
 
@@ -104,21 +137,36 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
                             word2Stem = getNumberAsNoun(num10sVal);
                         }
 
-                        numAstext = numAstext + " "+combine(word2Prefix, word2Stem, usePhonologicalConditioning);
+                        numAstext = numAstext + " "+combine(word2Prefix, word2Stem);
+                        if (debugMode) {
+                            morphemeListForDebugging.add(" ");
+                            morphemeListForDebugging.add(word2Prefix);
+                            morphemeListForDebugging.add(word2Stem);
+                        }
                     }
 
                     if (remainder > 0) {
+                        if (debugMode) {
+                            morphemeListForDebugging.add(" ");
+                            morphemeListForDebugging.add("na");
+                        }
                         String word3Remainder = "";
                         if (remainder < 6) {
                             word3Remainder = getStem(remainder);
+                            if (debugMode) {
+                                morphemeListForDebugging.add(word3Remainder);
+                            }
                         }
                         else if (remainder > 5 && remainder < 10) {
                             word3Remainder = getNumberAsNoun(remainder);
+                            if (debugMode) {
+                                morphemeListForDebugging.add(word3Remainder);
+                            }
                         }
                         else {
                             word3Remainder = getText(remainder, NumCategory.Adverb);
                         }
-                        numAstext = numAstext + " " + combine("na", word3Remainder, usePhonologicalConditioning);
+                        numAstext = numAstext + " " + combine("na", word3Remainder);
                     }
                     break;
                 }
@@ -129,7 +177,7 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
     }
 
     @Override
-    public String getText(int number, NounClass nounClass, NumCategory category, boolean usePhonologicalConditioning) throws Exception {
+    public String getText(int number, NounClass nounClass, NumCategory category, boolean debugMode) throws Exception {
         String numAstext = "";
 
         if (ifHasUniqueStem(number) && category == NumCategory.Cardinal && number < 10) {
@@ -142,17 +190,29 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
                 concVal = vals[0]; //TODO when there are multiple values, how do you choose between them?
             }
 
-            numAstext = combine(concVal, stem, usePhonologicalConditioning);
+            numAstext = combine(concVal, stem);
+            if (debugMode) {
+                morphemeListForDebugging.add(concVal);
+                morphemeListForDebugging.add(stem);
+            }
         }
         else if (ifHasUniqueStem(number) && category == NumCategory.Ordinal) {
             ConcordType concType = ConcordType.getConcordType("PossessiveConcord");
             String concVal = concordMapper.getConcordValue(nounClass, concType);
             String numAsNoun = getNumberAsNoun(number);
             if (number == 1) {
-                numAstext = combine(concVal, "ukuqala", usePhonologicalConditioning);
+                numAstext = combine(concVal, "ukuqala");
+                if (debugMode) {
+                    morphemeListForDebugging.add(concVal);
+                    morphemeListForDebugging.add("ukuqala");
+                }
             }
             else {
-                numAstext = combine(concVal, numAsNoun, usePhonologicalConditioning);
+                numAstext = combine(concVal, numAsNoun);
+                if (debugMode) {
+                    morphemeListForDebugging.add(concVal);
+                    morphemeListForDebugging.add(numAsNoun);
+                }
             }
         }
         else  if (ifHasUniqueStem(number) && category == NumCategory.Collective  && number < 10) {
@@ -172,15 +232,24 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
             String possConVal = concordMapper.getConcordValue(nounClass, concType);
 
             String unnasalisedBasicPref = removeNasals(basicPref);
-            String unfinalisedPrefix = combine(possConVal, "o", usePhonologicalConditioning);
-            String prefix = combine(unfinalisedPrefix, unnasalisedBasicPref, usePhonologicalConditioning);
+            String unfinalisedPrefix = combine(possConVal, "o");
+            String prefix = combine(unfinalisedPrefix, unnasalisedBasicPref);
 
             if (number > 5 && number < 10) {
-                String modifiedPrefix = combine(prefix, "si", usePhonologicalConditioning);
-                numAstext = combine(modifiedPrefix, stem, usePhonologicalConditioning);
+                String modifiedPrefix = combine(prefix, "si");
+                numAstext = combine(modifiedPrefix, stem);
+                if (debugMode) {
+                    morphemeListForDebugging.add(prefix);
+                    morphemeListForDebugging.add("si");
+                    morphemeListForDebugging.add(stem);
+                }
             }
             else {
-                numAstext = combine(prefix, stem, usePhonologicalConditioning);
+                numAstext = combine(prefix, stem);
+                if (debugMode) {
+                    morphemeListForDebugging.add(prefix);
+                    morphemeListForDebugging.add(stem);
+                }
             }
         }
         else {
@@ -220,8 +289,13 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
 
                     String word1Prefix = getNearest10sPrefix(nearest10s, category, usePlural);
                     String word1Stem = getStem(nearest10s);
-                    String word1 = combine(combine(lead, word1Prefix, usePhonologicalConditioning), word1Stem, usePhonologicalConditioning);
+                    String word1 = combine(combine(lead, word1Prefix), word1Stem);
                     numAstext = word1;
+                    if (debugMode) {
+                        morphemeListForDebugging.add(lead);
+                        morphemeListForDebugging.add(word1Prefix);
+                        morphemeListForDebugging.add(word1Stem);
+                    }
 
                     if (usePlural) {
                         String word2Prefix = getNumOf10sPrefix(nearest10s, num10sVal);
@@ -233,22 +307,37 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
                             word2Stem = getNumberAsNoun(num10sVal);
                         }
 
-                        String word2 = combine(word2Prefix, word2Stem, usePhonologicalConditioning);
+                        String word2 = combine(word2Prefix, word2Stem);
                         numAstext = numAstext + " " + word2;
+                        if (debugMode) {
+                            morphemeListForDebugging.add(" ");
+                            morphemeListForDebugging.add(word2Prefix);
+                            morphemeListForDebugging.add(word2Stem);
+                        }
                     }
 
                     if (remainder > 0) {
+                        if (debugMode) {
+                            morphemeListForDebugging.add(" ");
+                            morphemeListForDebugging.add("na");
+                        }
                         String word3Remainder = "";
                         if (remainder < 6) {
                             word3Remainder = getStem(remainder);
+                            if (debugMode) {
+                                morphemeListForDebugging.add(word3Remainder);
+                            }
                         }
                         else if (remainder > 5 && remainder < 10) {
                             word3Remainder = getNumberAsNoun(remainder);
+                            if (debugMode) {
+                                morphemeListForDebugging.add(word3Remainder);
+                            }
                         }
                         else {
                             word3Remainder = getText(remainder, nounClass, category);
                         }
-                        numAstext = numAstext + " " + combine("na", word3Remainder, usePhonologicalConditioning);
+                        numAstext = numAstext + " " + combine("na", word3Remainder);
                     }
                     break;
                 }
@@ -258,14 +347,8 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
         return numAstext;
     }
 
-    private String combine(String lmorph, String rmorph, boolean usePhonCondRules) throws Exception {
-        String newValue;
-        if (usePhonCondRules) {
-            newValue = phonConditioner.joinMorpheme(lmorph, rmorph);
-        }
-        else {
-            newValue = lmorph + rmorph;
-        }
+    private String combine(String lmorph, String rmorph) throws Exception {
+        String newValue = phonConditioner.joinMorpheme(lmorph, rmorph);
         return newValue;
     }
 

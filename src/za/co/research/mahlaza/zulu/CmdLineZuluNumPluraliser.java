@@ -3,6 +3,10 @@ package za.co.research.mahlaza.zulu;
 import org.apache.commons.cli.*;
 import za.co.mahlaza.research.grammarengine.base.models.feature.NounClass;
 
+import java.util.Deque;
+import java.util.Queue;
+import java.util.concurrent.atomic.AtomicReference;
+
 public class CmdLineZuluNumPluraliser {
     public static void main(String[] args) throws Exception {
         Options cmdArgs = new Options();
@@ -58,20 +62,27 @@ public class CmdLineZuluNumPluraliser {
             }
 
             String verbalisedNumber = "";
-            String verbalisedNumberNoPhonCond = "";
             if (nounClass == null) {
                 verbalisedNumber = verbaliser.getText(number, currNumCategory);
-                verbalisedNumberNoPhonCond = verbaliser.getText(number, currNumCategory, false);
             }
             else {
                 verbalisedNumber = verbaliser.getText(number, nounClass, currNumCategory);
-                verbalisedNumberNoPhonCond = verbaliser.getText(number, nounClass, currNumCategory, false);
             }
             String result = "Input = %s\nVerbalised number = %s";
             System.out.println(String.format(result, number, verbalisedNumber));
             if (debug) {
-                String anotherResult = "Verbalised number with no phon. conditioning = %s";
-                System.out.println(String.format(anotherResult, verbalisedNumberNoPhonCond));
+                String anotherResult = "Verbalised number with clear morphemes = %s";
+                Queue<String> morphemeListForDebugging = verbaliser.getDebugMorphemes();
+                AtomicReference<String> debubMorphemes = new AtomicReference<>("");
+                morphemeListForDebugging.forEach(morpheme -> {
+                    if (morpheme.isBlank()) {
+                        debubMorphemes.set( debubMorphemes.get() + morpheme);
+                    }
+                    else {
+                        debubMorphemes.set( debubMorphemes.get() + "[" + morpheme + "]");
+                    }
+                });
+                System.out.println(String.format(anotherResult, debubMorphemes.get()));
             }
         } catch (ParseException e) {
             e.printStackTrace();
