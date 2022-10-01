@@ -25,10 +25,10 @@ public class AdverbSpecialMultipleOfTenController implements SpecialMultipleOfTe
         String prefix = "";
 
         if (number == 10 || number == 100) {
-            prefix = isPlural? "kangama" : "kali";
+            prefix = isPlural? "kanga" : "kali"; //"kanga" : "kali";
         }
         else if (number == 1000) {
-            prefix = isPlural? "kasizi" : "kayi";
+            prefix = isPlural? "kasizi" : "kayi"; //"kasizi" : "kayi";
         }
 
         return prefix;

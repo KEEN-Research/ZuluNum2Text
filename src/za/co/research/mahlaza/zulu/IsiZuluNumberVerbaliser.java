@@ -51,16 +51,16 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
 
     @Override
     public String getText(int number, NumCategory category) throws Exception {
-        return getText(number, category, true);
+        return getText(number, category, true, true);
     }
 
     @Override
     public String getText(int number, NounClass nounClass, NumCategory category) throws Exception {
-        return getText(number, nounClass, category, true);
+        return getText(number, nounClass, category, true, true);
     }
 
     @Override
-    public String getText(int number, NumCategory category, boolean debugMode) throws Exception {
+    public String getText(int number, NumCategory category, boolean debugMode, boolean firstFuncCall) throws Exception {
         String numAstext = "";
 
         if ((category == NumCategory.Cardinal || category == NumCategory.Ordinal) & number < 10) {
@@ -86,9 +86,15 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
                 }
             }
             else if (number == 10 || number == 100) {
-                numAstext = "kali" + getStem(number);
+                if (firstFuncCall) {
+                    numAstext =  numAstext + "ka";
+                    if (debugMode) {
+                        morphemeListForDebugging.add("ka");
+                    }
+                }
+                numAstext = numAstext + "li" + getStem(number);
                 if (debugMode) {
-                    morphemeListForDebugging.add("kali");
+                    morphemeListForDebugging.add("li");
                     morphemeListForDebugging.add(getStem(number));
                 }
             }
@@ -113,9 +119,17 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
                     String word1 = getNearest10sWord(nearest10s, NumCategory.Adverb, usePlural);
 
                     if (category == NumCategory.Adverb) {
-                        numAstext = combine(word1Prefix , word1);
+                        if (firstFuncCall) {
+                            numAstext = combine(word1Prefix , word1);
+                            if (debugMode) {
+                                morphemeListForDebugging.add(word1Prefix);
+                            }
+                        }
+                        else {
+                            numAstext = word1;
+                        }
+
                         if (debugMode) {
-                            morphemeListForDebugging.add(word1Prefix);
                             morphemeListForDebugging.add(word1);
                         }
                     }
@@ -148,7 +162,9 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
                     if (remainder > 0) {
                         if (debugMode) {
                             morphemeListForDebugging.add(" ");
-                            morphemeListForDebugging.add("na");
+                            if (firstFuncCall) {
+                                morphemeListForDebugging.add("na");
+                            }
                         }
                         String word3Remainder = "";
                         if (remainder < 6) {
@@ -164,7 +180,7 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
                             }
                         }
                         else {
-                            word3Remainder = getText(remainder, NumCategory.Adverb);
+                            word3Remainder = getText(remainder, category, debugMode, false);
                         }
                         numAstext = numAstext + " " + combine("na", word3Remainder);
                     }
@@ -177,7 +193,7 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
     }
 
     @Override
-    public String getText(int number, NounClass nounClass, NumCategory category, boolean debugMode) throws Exception {
+    public String getText(int number, NounClass nounClass, NumCategory category, boolean debugMode, boolean firstFunctionCall) throws Exception {
         String numAstext = "";
 
         if (ifHasUniqueStem(number) && category == NumCategory.Cardinal && number < 10) {
@@ -287,9 +303,14 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
                         throw new IllegalArgumentException("The getText(number, nounClass, category) method does not support the category = "+category);
                     }
 
+                    if (!firstFunctionCall) {
+                        lead = "";
+                    }
+
                     String word1Prefix = getNearest10sPrefix(nearest10s, category, usePlural);
                     String word1Stem = getStem(nearest10s);
-                    String word1 = combine(combine(lead, word1Prefix), word1Stem);
+                    String x = combine(lead, word1Prefix);
+                    String word1 = combine(x, word1Stem);
                     numAstext = word1;
                     if (debugMode) {
                         morphemeListForDebugging.add(lead);
@@ -319,7 +340,9 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
                     if (remainder > 0) {
                         if (debugMode) {
                             morphemeListForDebugging.add(" ");
-                            morphemeListForDebugging.add("na");
+                            if (firstFunctionCall) {
+                                morphemeListForDebugging.add("na");
+                            }
                         }
                         String word3Remainder = "";
                         if (remainder < 6) {
@@ -335,7 +358,7 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
                             }
                         }
                         else {
-                            word3Remainder = getText(remainder, nounClass, category);
+                            word3Remainder = getText(remainder, nounClass, category, debugMode, false);
                         }
                         numAstext = numAstext + " " + combine("na", word3Remainder);
                     }
