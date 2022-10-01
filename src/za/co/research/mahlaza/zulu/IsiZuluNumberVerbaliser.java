@@ -63,7 +63,7 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
     public String getText(int number, NumCategory category, boolean debugMode, boolean firstFuncCall) throws Exception {
         String numAstext = "";
 
-        if ((category == NumCategory.Cardinal || category == NumCategory.Ordinal) & number < 10) {
+        if ((category == NumCategory.Cardinal || category == NumCategory.Ordinal || category == NumCategory.Collective) & number < 10) {
             numAstext = "isi" + getStem(number);
             if (debugMode) {
                 morphemeListForDebugging.add("isi");
