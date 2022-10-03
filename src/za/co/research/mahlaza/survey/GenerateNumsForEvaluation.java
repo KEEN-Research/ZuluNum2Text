@@ -50,6 +50,8 @@ public class GenerateNumsForEvaluation {
                     pw.println(String.format("%s, %s, Ordinal, No, N/A", num, ordinalNum1));
                     String adverbNum1 = verbaliser.getText(num, NumCategory.Adverb);
                     pw.println(String.format("%s, %s, Adverb, No, N/A", num, adverbNum1));
+                    String collecNum1 = verbaliser.getText(num, NumCategory.Collective);
+                    pw.println(String.format("%s, %s, Set-of-items, No, N/A", num, collecNum1));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -62,6 +64,8 @@ public class GenerateNumsForEvaluation {
                     pw.println(String.format("%s, %s, Ordinal, No, N/A", num, ordinalNum1));
                     String adverbNum1 = verbaliser.getText(num, NumCategory.Adverb);
                     pw.println(String.format("%s, %s, Adverb, No, N/A", num, adverbNum1));
+                    String collecNum1 = verbaliser.getText(num, NumCategory.Collective);
+                    pw.println(String.format("%s, %s, Set-of-items, No, N/A", num, collecNum1));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
