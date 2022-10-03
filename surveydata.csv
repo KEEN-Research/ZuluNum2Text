@@ -1,0 +1,61 @@
+Numeral, Number, Category, Has Agreement Marker, AgreementNounAndClass
+8, isishiyangalombini, Cardinal, No, N/A
+8, isishiyangalombini, Ordinal, No, N/A
+8, kasishiyangalombini, Adverb, No, N/A
+7, isikhombisa, Cardinal, No, N/A
+7, isikhombisa, Ordinal, No, N/A
+7, kasikhombisa, Adverb, No, N/A
+5, isihlanu, Cardinal, No, N/A
+5, isihlanu, Ordinal, No, N/A
+5, kahlanu, Adverb, No, N/A
+1000, inkulungwane, Cardinal, No, N/A
+1000, inkulungwane, Ordinal, No, N/A
+1000, kayinkulungwane, Adverb, No, N/A
+2, isibili, Cardinal, No, N/A
+2, isibili, Ordinal, No, N/A
+2, kabili, Adverb, No, N/A
+9104, izinkulungwane eziyisishiyangalolunye nekhulu nane, Cardinal, No, N/A
+9104, izinkulungwane eziyisishiyangalolunye nekhulu nane, Ordinal, No, N/A
+9104, kangangezinkulungwane eziyisishiyangalolunye nekhulu nane, Adverb, No, N/A
+16, ishumi nesithupha, Cardinal, No, N/A
+16, ishumi nesithupha, Ordinal, No, N/A
+16, kalishumi nesithupha, Adverb, No, N/A
+4902, izinkulungwane  namakhulu ayisishiyangalolunye nambili, Cardinal, No, N/A
+4902, izinkulungwane  namakhulu ayisishiyangalolunye nambili, Ordinal, No, N/A
+4902, kangangezinkulungwane  namakhulu ayisishiyangalolunye nambili, Adverb, No, N/A
+1545, inkulungwane namakhulu amahlanu namashumi amane nanhlanu, Cardinal, No, N/A
+1545, inkulungwane namakhulu amahlanu namashumi amane nanhlanu, Ordinal, No, N/A
+1545, kayinkulungwane namakhulu amahlanu namashumi amane nanhlanu, Adverb, No, N/A
+548, amakhulu amahlanu namashumi amane nesishiyangalombini, Cardinal, No, N/A
+548, amakhulu amahlanu namashumi amane nesishiyangalombini, Ordinal, No, N/A
+548, kangamakhulu amahlanu namashumi amane nesishiyangalombini, Adverb, No, N/A
+8, abayisishiyangalombini, Cardinal, Yes, ababhali-2
+8, besishiyangalombini, Ordinal, Yes, ababhali-2
+8, bobasishiyangalombini, Set-of-items, Yes, ababhali-2
+7, abayisikhombisa, Cardinal, Yes, ababhali-2
+7, besikhombisa, Ordinal, Yes, ababhali-2
+7, bobasikhombisa, Set-of-items, Yes, ababhali-2
+5, abahlanu, Cardinal, Yes, ababhali-2
+5, besihlanu, Ordinal, Yes, ababhali-2
+5, bobahlanu, Set-of-items, Yes, ababhali-2
+1000, abayinkulungwane, Cardinal, Yes, ababhali-2
+1000, besinkulungwane, Ordinal, Yes, ababhali-2
+1000, abayinkulungwane, Set-of-items, Yes, ababhali-2
+2, ababili, Cardinal, Yes, ababhali-2
+2, besibili, Ordinal, Yes, ababhali-2
+2, bobabili, Set-of-items, Yes, ababhali-2
+9104, abazinkulungwane eziyisishiyangalolunye nayikhulu nane, Cardinal, Yes, ababhali-2
+9104, bezinkulungwane eziyisishiyangalolunye nekhulu nane, Ordinal, Yes, ababhali-2
+9104, abazinkulungwane eziyisishiyangalolunye nalikhulu nane, Set-of-items, Yes, ababhali-2
+16, abayishumi nesithupha, Cardinal, Yes, ababhali-2
+16, beshumi nesithupha, Ordinal, Yes, ababhali-2
+16, abalishumi nesithupha, Set-of-items, Yes, ababhali-2
+4902, abazinkulungwane  nangamakhulu ayisishiyangalolunye nambili, Cardinal, Yes, ababhali-2
+4902, bezinkulungwane  namakhulu ayisishiyangalolunye nambili, Ordinal, Yes, ababhali-2
+4902, abazinkulungwane  nangamakhulu ayisishiyangalolunye nambili, Set-of-items, Yes, ababhali-2
+1545, abayinkulungwane nangamakhulu amahlanu nangamashumi amane nanhlanu, Cardinal, Yes, ababhali-2
+1545, benkulungwane namakhulu amahlanu namashumi amane nanhlanu, Ordinal, Yes, ababhali-2
+1545, abayinkulungwane nangamakhulu amahlanu nangamashumi amane nanhlanu, Set-of-items, Yes, ababhali-2
+548, abangamakhulu amahlanu nangamashumi amane nesishiyangalombini, Cardinal, Yes, ababhali-2
+548, bamakhulu amahlanu namashumi amane nesishiyangalombini, Ordinal, Yes, ababhali-2
+548, abangamakhulu amahlanu nangamashumi amane nesishiyangalombini, Set-of-items, Yes, ababhali-2
