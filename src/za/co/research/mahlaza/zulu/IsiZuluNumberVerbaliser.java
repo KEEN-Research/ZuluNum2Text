@@ -206,6 +206,10 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
                 concVal = vals[0]; //TODO when there are multiple values, how do you choose between them?
             }
 
+            if (number > 5  && number < 10) {
+                concVal = combine(concVal, "ayisi");
+            }
+
             numAstext = combine(concVal, stem);
             if (debugMode) {
                 morphemeListForDebugging.add(concVal);
