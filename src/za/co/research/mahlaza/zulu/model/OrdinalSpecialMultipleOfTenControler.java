@@ -7,32 +7,41 @@ public class OrdinalSpecialMultipleOfTenControler implements SpecialMultipleOfTe
         String stem = "";
         if (number == 10) {
             stem = "shumi";
-        }
-        else if (number == 100) {
+        } else if (number == 100) {
             stem = "khulu";
-        }
-        else if (number == 1000) {
+        } else if (number == 1000) {
             return "nkulungwane";
-        }
-        else {
-            throw new IllegalArgumentException("The getStem method does not support the value "+number);
+        } else {
+            throw new IllegalArgumentException("The getStem method does not support the value " + number);
         }
         return stem;
     }
 
     @Override
-    public String getPrefix(int number, boolean isPlural) {
+    public String getPrefix1(int number, boolean isPlural, boolean includeAgreementMark) {
         String prefix = "";
-        if (number == 1000) {
-            prefix = isPlural? "izi" : "i";
-        }
-        else if (number == 10 || number == 100) {
-            prefix = isPlural? "ma" : "i";
-        }
-        else {
-            throw new IllegalArgumentException("The getPrefix method does not support the value "+number);
-        }
         return prefix;
     }
 
+    @Override
+    public String getPrefix2(int number, boolean isPlural, boolean includeAgreementMark) throws Exception {
+        String prefix = "";
+        if (includeAgreementMark) {
+            if (number == 1000) {
+                prefix = isPlural? "izi" : "i";
+            }
+            else if (number == 10 || number == 100) {
+                prefix = isPlural? "ama" : "i";
+            }
+        }
+        else {
+            if (number == 1000) {
+                prefix = isPlural? "izi" : "i";
+            }
+            else if (number == 10 || number == 100) {
+                prefix = isPlural? "ama" : "i";
+            }
+        }
+        return prefix;
+    }
 }

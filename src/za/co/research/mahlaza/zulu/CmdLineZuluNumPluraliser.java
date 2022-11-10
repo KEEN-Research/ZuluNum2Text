@@ -3,7 +3,6 @@ package za.co.research.mahlaza.zulu;
 import org.apache.commons.cli.*;
 import za.co.mahlaza.research.grammarengine.base.models.feature.NounClass;
 
-import java.util.Deque;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -56,7 +55,7 @@ public class CmdLineZuluNumPluraliser {
                     break;
                 }
                 case "Co": {
-                    currNumCategory = NumCategory.Collective;
+                    currNumCategory = NumCategory.SetOfItems;
                     break;
                 }
             }

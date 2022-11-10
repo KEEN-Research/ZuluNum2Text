@@ -21,16 +21,28 @@ public class CardinalSpecialMultipleOfTenControler implements SpecialMultipleOfT
     }
 
     @Override
-    public String getPrefix(int number, boolean isPlural) {
+    public String getPrefix1(int number, boolean isPlural, boolean includeAgreementMark) throws Exception {
+        return "";
+    }
+
+    @Override
+    public String getPrefix2(int number, boolean isPlural, boolean includeAgreementMark) {
         String prefix = "";
-        if (number == 1000) {
-            prefix = isPlural? "zi" : "yi";
-        }
-        else if (number == 10 || number == 100) {
-            prefix = isPlural? "ngama" : "yi";
+        if (includeAgreementMark) {
+            if (number == 1000) {
+                prefix = isPlural? "zi" : "yi";
+            }
+            else if (number == 10 || number == 100) {
+                prefix = isPlural? "ma" : "yi";
+            }
         }
         else {
-            throw new IllegalArgumentException("The getPrefix method does not support the value "+number);
+            if (number == 1000) {
+                prefix = isPlural? "izi" : "i";
+            }
+            else if (number == 10 || number == 100) {
+                prefix = isPlural? "ama" : "i";
+            }
         }
         return prefix;
     }
