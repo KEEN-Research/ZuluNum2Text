@@ -24,11 +24,19 @@ public class CmdLineZuluNumPluraliser {
         Option debugOpt = new Option("d", "debug", false, "Print debug information");
         cmdArgs.addOption(debugOpt);
 
+        Option helpOpt = new Option("h", "help", false, "Print help information");
+        cmdArgs.addOption(helpOpt);
+
         HelpFormatter formatter = new HelpFormatter();
 
         try {
             CommandLineParser parser = new DefaultParser();
             CommandLine cmd = parser.parse(cmdArgs, args);
+
+            if (cmd.hasOption("h")) {
+                formatter.printHelp("Number verbaliser", cmdArgs);
+                System.exit(1);
+            }
 
             Integer number = Integer.valueOf(cmd.getOptionValue("number"));
             NounClass nounClass = null;
@@ -38,7 +46,7 @@ public class CmdLineZuluNumPluraliser {
             String category = cmd.getOptionValue("category");
             boolean debug = cmd.hasOption("debug");
 
-                IsiZuluNumberVerbaliser verbaliser = new IsiZuluNumberVerbaliser();
+            IsiZuluNumberVerbaliser verbaliser = new IsiZuluNumberVerbaliser();
 
             NumCategory currNumCategory = null;
             switch (category) {
@@ -59,6 +67,7 @@ public class CmdLineZuluNumPluraliser {
                     break;
                 }
             }
+
 
             String verbalisedNumber = "";
             if (nounClass == null) {
@@ -85,7 +94,7 @@ public class CmdLineZuluNumPluraliser {
             }
         } catch (ParseException e) {
             e.printStackTrace();
-            formatter.printHelp("utility-name", cmdArgs);
+            formatter.printHelp("Number verbaliser", cmdArgs);
             System.exit(1);
         }
     }

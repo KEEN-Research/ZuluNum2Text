@@ -31,7 +31,7 @@ public class AdverbSpecialMultipleOfTenController implements SpecialMultipleOfTe
                 prefix = isPlural? "kanga" : "kali";
             }
             else if (number == 1000) {
-                prefix = "";
+                prefix = "kayi";
             }
         }
         return prefix;

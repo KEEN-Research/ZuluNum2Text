@@ -30,7 +30,7 @@ public class SetOfItemsSpecialMultipleOfTenController implements SpecialMultiple
         String prefix = "";
         if (includeAgreementMark) {
             if (number == 1000) {
-                prefix = isPlural? "izi" : "i";
+                prefix = isPlural? "yizi" : "i";
             }
             else if (number == 10 || number == 100) {
                 prefix = isPlural? "ma" : "li";

@@ -37,7 +37,7 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
         defaultStems.put(5, "hlanu");
         defaultStems.put(6, "thupha");
         defaultStems.put(7, "khombisa");
-        defaultStems.put(8, "shiyagalombini");
+        defaultStems.put(8, "shiyagalombili");
         defaultStems.put(9, "shiyagalolunye");
         defaultStems.put(10, "shumi");
         defaultStems.put(100, "khulu");
@@ -115,18 +115,32 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
                     boolean usePlural = num10sVal > 1;
 
                     if (category == NumCategory.Adverb) {
-                        String segment1 = getNearest10sPrefix(1, nearest10s, NumCategory.Adverb, usePlural, false);
-                        String segment2 = getNearest10sPrefix(2, nearest10s, NumCategory.Adverb, usePlural, false);
+                        int prefixCountStart = 1;
+                        if (firstFuncCall) {
+                            String segment1 = getNearest10sPrefix(prefixCountStart, nearest10s, NumCategory.Adverb, usePlural, false);
+                            String segment2 = getNearest10sPrefix(prefixCountStart+1, nearest10s, NumCategory.Adverb, usePlural, false);
+                            numAstext = combine(segment1, segment2);
 
-                        numAstext = combine(segment1, segment2);
+                            if (debugMode) {
+                                morphemeListForDebugging.add(segment1);
+                                morphemeListForDebugging.add(segment2);
+                            }
+                        }
+                        else {
+                            String segment2 = getNearest10sPrefix(prefixCountStart+1, nearest10s, NumCategory.Adverb, usePlural, false);
+                            numAstext = segment2;
+                            if (debugMode) {
+                                morphemeListForDebugging.add(segment2);
+                            }
+                        }
+
                         String stem = getStem(nearest10s);
                         numAstext = combine(numAstext, stem);
 
                         if (debugMode) {
-                            morphemeListForDebugging.add(segment1);
-                            morphemeListForDebugging.add(segment2);
                             morphemeListForDebugging.add(stem);
                         }
+
                     }
                     else {
                         String segment2 = getNearest10sPrefix(2, nearest10s, NumCategory.Adverb, usePlural, false);
@@ -257,11 +271,11 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
             String prefix = combine(unfinalisedPrefix, unnasalisedBasicPref);
 
             if (number > 5 && number < 10) {
-                String modifiedPrefix = combine(prefix, "si");
+                String modifiedPrefix = combine(prefix, "yisi");
                 numAstext = combine(modifiedPrefix, stem);
                 if (debugMode) {
                     morphemeListForDebugging.add(prefix);
-                    morphemeListForDebugging.add("si");
+                    morphemeListForDebugging.add("yisi");
                     morphemeListForDebugging.add(stem);
                 }
             }
@@ -312,7 +326,7 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
                         lead = "";
                     }
 
-                    String word1Prefix = getNearest10sPrefix(2, nearest10s, category, usePlural, true);
+                    String word1Prefix = getNearest10sPrefix(2, nearest10s, category, usePlural, firstFunctionCall);
                     String word1Stem = getStem(nearest10s);
                     String x = combine(lead, word1Prefix);
                     String word1 = combine(x, word1Stem);
@@ -439,7 +453,7 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
                 }
             }
         }
-        else {
+        else if (prefixCount == 2) {
             switch (category) {
                 case Cardinal: {
                     prefix = cardinal10sController.getPrefix2(nearest10s, usePlural, useAgreement);
