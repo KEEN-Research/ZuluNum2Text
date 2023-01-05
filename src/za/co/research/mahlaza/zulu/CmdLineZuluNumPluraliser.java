@@ -2,7 +2,6 @@ package za.co.research.mahlaza.zulu;
 
 import org.apache.commons.cli.*;
 import za.co.mahlaza.research.grammarengine.base.models.feature.NounClass;
-
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -17,7 +16,7 @@ public class CmdLineZuluNumPluraliser {
         Option nounClassOpt = new Option("nc", "nounClass", true, "The noun class of the noun with which the number must agree");
         cmdArgs.addOption(nounClassOpt);
 
-        Option categoryOpt = new Option("c", "category", true, "The category of the number to be verbalised (Ca = Cardinal, A = Adverb, O = Ordinal, Co = Collective)");
+        Option categoryOpt = new Option("c", "category", true, "The category of the number to be verbalised (Ca = Cardinal, A = Adverb, O = Ordinal, Co = SoI = Collective/Set-of-items)");
         categoryOpt.setRequired(true);
         cmdArgs.addOption(categoryOpt);
 
@@ -62,7 +61,8 @@ public class CmdLineZuluNumPluraliser {
                     currNumCategory = NumCategory.Ordinal;
                     break;
                 }
-                case "Co": {
+                case "Co":
+                case "SoI": {
                     currNumCategory = NumCategory.SetOfItems;
                     break;
                 }
