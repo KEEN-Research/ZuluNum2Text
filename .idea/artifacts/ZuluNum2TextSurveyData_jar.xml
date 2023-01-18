@@ -1,7 +1,10 @@
 <component name="ArtifactManager">
   <artifact type="jar" name="ZuluNum2TextSurveyData:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/ZuluNum2TextSurveyData_jar</output-path>
-    <root id="archive" name="ZuluNum2TextCMD.jar">
+    <root id="archive" name="ZuluNum2TextSurveyData.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/manifests/surveydata/META-INF/MANIFEST.MF" />
+      </element>
       <element id="module-output" name="ZuluNum2TextCMD" />
       <element id="extracted-dir" path="$PROJECT_DIR$/libs/commons-cli-1.3.1.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/libs/GrammarEngineNguni.jar" path-in-jar="/" />

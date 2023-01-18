@@ -21,7 +21,7 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
 
     private CardinalSpecialMultipleOfTenControler cardinal10sController = new CardinalSpecialMultipleOfTenControler();
     private OrdinalSpecialMultipleOfTenControler ordinal10sController = new OrdinalSpecialMultipleOfTenControler();
-    private SetOfItemsSpecialMultipleOfTenController collective10sController = new SetOfItemsSpecialMultipleOfTenController();
+    private SetOfItemsSpecialMultipleOfTenController setOfItems10sController = new SetOfItemsSpecialMultipleOfTenController();
     private AdverbSpecialMultipleOfTenController adverb10sController = new AdverbSpecialMultipleOfTenController();
     private ZuluNounClassPrefixResolver zuluNounClassPrefixController = new ZuluNounClassPrefixResolver();
 
@@ -310,13 +310,19 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
                         lead = concordMapper.getConcordValue(nounClass, concType);
                     }
                     else if (category == NumCategory.SetOfItems) {
-                        ConcordType concType = ConcordType.getConcordType("AdjectivalConcord");
-                        lead = concordMapper.getConcordValue(nounClass, concType);
-                        if (lead.contains("/")) {
-                            String[] leadVals = lead.split("/");
-                            lead = leadVals[0];
+                        ConcordType concType = ConcordType.getConcordType("PossessiveConcord");
+                        String possConVal = concordMapper.getConcordValue(nounClass, concType);
+
+                        String basicPref = zuluNounClassPrefixController.getBasicPrefix(nounClass.getNounClass());
+                        if (basicPref.contains("/")) {
+                            //TODO: if there are multiple basic prefixes, how do you chose between them?
+                            String[] prefVals = basicPref.split("/");
+                            basicPref = prefVals[0];
                         }
-                        lead = removeNasals(lead);
+
+                        String unnasalisedBasicPref = removeNasals(basicPref);
+                        String unfinalisedPrefix = combine(possConVal, "o");
+                        lead = combine(unfinalisedPrefix, unnasalisedBasicPref);
                     }
                     else {
                         throw new IllegalArgumentException("The getText(number, nounClass, category) method does not support the category = "+category);
@@ -444,7 +450,7 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
                     break;
                 }
                 case SetOfItems: {
-                    prefix = collective10sController.getPrefix1(nearest10s, usePlural, useAgreement);
+                    prefix = setOfItems10sController.getPrefix1(nearest10s, usePlural, useAgreement);
                     break;
                 }
                 case Adverb: {
@@ -464,7 +470,7 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
                     break;
                 }
                 case SetOfItems: {
-                    prefix = collective10sController.getPrefix2(nearest10s, usePlural, useAgreement);
+                    prefix = setOfItems10sController.getPrefix2(nearest10s, usePlural, useAgreement);
                     break;
                 }
                 case Adverb: {
