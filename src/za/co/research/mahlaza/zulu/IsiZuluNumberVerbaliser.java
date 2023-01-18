@@ -510,7 +510,7 @@ public class IsiZuluNumberVerbaliser implements NumberVerbaliser {
         String stem = getStem(number);
 
         String prefix = "";
-        if (number == 10) {
+        if (number == 10 || number == 100 || number == 1000) {
             prefix = "i";
         }
         else {
