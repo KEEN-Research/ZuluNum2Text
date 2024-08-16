@@ -21,16 +21,36 @@ public class AdverbSpecialMultipleOfTenController implements SpecialMultipleOfTe
     }
 
     @Override
-    public String getPrefix(int number, boolean isPlural) throws Exception {
+    public String getPrefix1(int number, boolean isPlural, boolean includeAgreementMark) throws Exception {
         String prefix = "";
-
-        if (number == 10 || number == 100) {
-            prefix = isPlural? "kangama" : "kali";
+        if (includeAgreementMark) {
+            prefix = "";
         }
-        else if (number == 1000) {
-            prefix = isPlural? "kasizi" : "kayi";
+        else {
+            if (number == 10 || number == 100) {
+                prefix = isPlural? "kanga" : "kali";
+            }
+            else if (number == 1000) {
+                prefix = "kayi";
+            }
         }
+        return prefix;
+    }
 
+    @Override
+    public String getPrefix2(int number, boolean isPlural, boolean includeAgreementMark) throws Exception {
+        String prefix = "";
+        if (includeAgreementMark) {
+            prefix = "";
+        }
+        else {
+            if (number == 10 || number == 100) {
+                prefix = isPlural? "ama" : "i";
+            }
+            else if (number == 1000) {
+                prefix = isPlural? "izi" : "i";
+            }
+        }
         return prefix;
     }
 }

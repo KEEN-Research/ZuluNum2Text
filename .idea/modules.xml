@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/ZuluNum2Text.iml" filepath="$PROJECT_DIR$/ZuluNum2Text.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ZuluNum2TextCMD.iml" filepath="$PROJECT_DIR$/ZuluNum2TextCMD.iml" />
     </modules>
   </component>
 </project>

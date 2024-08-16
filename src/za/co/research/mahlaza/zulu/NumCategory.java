@@ -4,5 +4,5 @@ public enum NumCategory {
     Cardinal,
     Adverb,
     Ordinal,
-    Collective
+    SetOfItems
 }
