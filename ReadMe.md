@@ -1,6 +1,6 @@
 # IsiZulu number verbaliser
 
-This is the Java source code for the isiZulu number verbaliser. It was initially created as part of the Digital Assistant For Financial Transactions project, with Junior Moraba and Amy Solomons (https://projects.cs.uct.ac.za/honsproj/cgi-bin/view/2021/moraba_solomons.zip/)
+This is the Java source code for the isiZulu number verbaliser. A first version was initially created as part of the Digital Assistant For Financial Transactions Honours project with Junior Moraba and Amy Solomons (https://projects.cs.uct.ac.za/honsproj/cgi-bin/view/2021/moraba_solomons.zip/), which underwent two more iterations of improvements to the current release version. 
 
 # Usage via commandline
 
@@ -50,3 +50,11 @@ String verbalisedNumber = verbaliser.getText(number, nounClass, currNumCategory)
 String verbalisedNumberNoPhonCond = verbaliser.getText(number, nounClass, currNumCategory, false);
 
 ```
+
+# Citing the isiZulu number generator
+
+Mahlaza, Z., Magwenzi, T., Keet, C.M., Khumalo, L. Automatically Generating IsiZulu Words From Indo-Arabic Numerals. 17th International Natural Language Generation Conference (INLG'24), Tokyo, Japan, September 23-27, 2024. ACL. (in print)
+
+# Funding
+
+This work was funded in part by the National Research Foundation (NRF) of South Africa (Grant Numbers 120852 and CPRR23040389063).
